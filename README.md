@@ -1,13 +1,13 @@
 # Módulo 7
 
 ## Exercício de fixação:
-Dado o exemplo do vídeo (clone o repositório), crie uma página que contenha um formulário para criação de usuários;
+-Dado o exemplo do vídeo (clone o repositório), crie uma página que contenha um formulário para criação de usuários;
 
-Crie uma rota GET para desenhar esse formulário;
+-Crie uma rota GET para desenhar esse formulário;
 
-Crie uma rota POST para receber os dados e criar um novo User no banco de dados. Use uma Action para criar o usuário;
+-Crie uma rota POST para receber os dados e criar um novo User no banco de dados. Use uma Action para criar o usuário;
 
-Após a criação, faça um redirect para a rota find/{id} do usuário recém criado.
+-Após a criação, faça um redirect para a rota find/{id} do usuário recém criado.
 
 ### Repositório com o código do vídeo:
 https://github.com/university-lessons/dabaf-07-request-flow
@@ -65,10 +65,9 @@ Rodei o comando para recriar a base local em um terminal
         $user->password = $request->senha;
         $user->save();
 
-        //ou refatorado
-        
-
-
+        //Refatorado
+        //user::create($request->all());
+    
         return view('profile', [ 'user' => $user] );
     }
 
@@ -100,6 +99,7 @@ Rodei o comando para recriar a base local em um terminal
 ### Comando utens durante o processo:
 
 sail artisan tinker
-> User::all()
-> User::create(['name' => 'Givanildo Teixeira', 'email' => 'giva@teste.com','password' => '123']);
+    User::all()
+    
+    User::create(['name' => 'Givanildo Teixeira', 'email' => 'giva@teste.com','password' => '123']);
 
