@@ -21,3 +21,9 @@ Route::get('/', function () {
 
 Route::get('/profile', [UserController::class, 'profile']);
 Route::get('/find/{id}', [UserController::class, 'find']);
+
+Route::get('/cadastrar', [UserController::class, 'create']);
+Route::post('/cadastrar', [UserController::class, 'store']);
+
+
+

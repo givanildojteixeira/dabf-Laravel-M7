@@ -25,4 +25,24 @@ class UserController extends Controller
         
         return view('profile-not-found');
     }
+
+    public function create()
+    {
+        return view('createUser');
+    }
+
+    public function store(Request $request)
+    {
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = $request->senha;
+        $user->save();
+
+        //Refatorado
+        //user::create($request->all());
+
+        return view('profile', [ 'user' => $user] );
+    }
+
 }

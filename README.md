@@ -1,66 +1,105 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Módulo 7
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Exercício de fixação:
+Dado o exemplo do vídeo (clone o repositório), crie uma página que contenha um formulário para criação de usuários;
 
-## About Laravel
+Crie uma rota GET para desenhar esse formulário;
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Crie uma rota POST para receber os dados e criar um novo User no banco de dados. Use uma Action para criar o usuário;
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Após a criação, faça um redirect para a rota find/{id} do usuário recém criado.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Repositório com o código do vídeo:
+https://github.com/university-lessons/dabaf-07-request-flow
 
-## Learning Laravel
+### Dificuldades encontradas para adequação do projeto
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Instalação do container
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+    docker run --rm \
+        -u "$(id -u):$(id -g)" \
+        -v "$(pwd):/var/www/html" \
+        -w /var/www/html \
+        laravelsail/php82-composer:latest \
+        composer install --ignore-platform-reqs
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Copia do arquivo .env.example > .env
 
-## Laravel Sponsors
+Ajuste da sql:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+    DB_CONNECTION=mysql
+    DB_HOST=mysql
+    DB_PORT=3306
+    DB_DATABASE=example_app
+    DB_USERNAME=root
+    DB_PASSWORD=
 
-### Premium Partners
+Comando:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+    sail up
 
-## Contributing
+Rodei o comando para recriar a base local em um terminal
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    sail artisan migrate:fresh
 
-## Code of Conduct
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Arquivos Alterados
 
-## Security Vulnerabilities
+##### routes>web.php   (acrescentado)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    Route::get('/cadastrar', [UserController::class, 'create']);
+    Route::post('/cadastrar', [UserController::class, 'store']);
 
-## License
+##### app>Http>Controllers>UserControler.php (acrescentado)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+    public function create()
+    {
+        return view('createUser');
+    }
+
+    public function store(Request $request)
+    {
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = $request->senha;
+        $user->save();
+
+        //ou refatorado
+        
+
+
+        return view('profile', [ 'user' => $user] );
+    }
+
+##### resources>views>createuser.blade.php   (novo)
+
+    <!DOCTYPE html>
+    <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>Criar novo usuario</title>
+        </head>
+        <body class="antialiased">
+            <h1>Criar novo Usuario</h1>
+            <form action="/cadastrar" method="post">
+                <label> Nome: </label>
+                <input type="text" name="name" id="name" placeholder="Nome Usuario">
+                <label> E-mail: </label>
+                <input type="text" name="email" id="email" placeholder="E-mail">
+                <label> Senha: </label>
+                <input type="password" name="senha" id="senha" placeholder="Senha">
+                <br><br>
+                <button type="submit">Cadastrar</button>
+            </form>
+        </body>
+    </html>
+
+
+### Comando utens durante o processo:
+
+sail artisan tinker
+> User::all()
+> User::create(['name' => 'Givanildo Teixeira', 'email' => 'giva@teste.com','password' => '123']);
+
